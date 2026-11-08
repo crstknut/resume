@@ -961,7 +961,18 @@
   document.addEventListener('visibilitychange', () => softPause(document.hidden));
   // the text résumé pauses the game while it is open
   const dlg = $('#cv');
-  new MutationObserver(() => softPause(dlg.open)).observe(dlg, { attributes: true, attributeFilter: ['open'] });
+  let musicBeforeCv = false;
+  new MutationObserver(() => {
+    if (dlg.open) {
+      musicBeforeCv = Sound.running;
+      Sound.stop();                       // silence in every mode, including the end screen
+      softPause(true);
+    } else {
+      softPause(false);
+      if (musicBeforeCv && !st.paused && !Sound.muted) Sound.start();
+      musicBeforeCv = false;
+    }
+  }).observe(dlg, { attributes: true, attributeFilter: ['open'] });
   // clicked buttons drop focus, so Space/Enter keep controlling the game
   document.addEventListener('click', (e) => { const b = e.target.closest('.hbtn, .tl-seg, .btn, .card-next'); if (b && !b.closest('dialog')) b.blur(); });
 

@@ -117,5 +117,5 @@ window.Sound = (() => {
     }
   }
 
-  return { start, stop, chapter, sfx, setMuted, get muted() { return muted; } };
+  return { start, stop, chapter, sfx, setMuted, get muted() { return muted; }, get running() { return running; } };
 })();
