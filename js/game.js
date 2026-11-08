@@ -4,7 +4,8 @@
   const Sound = window.Sound;
 
   // ---------- constants ----------
-  const W = 320, H = 180, GY = 150;               // world viewport and ground line
+  let W = 320;                                    // world viewport width: follows the stage aspect
+  const H = 180, GY = 150;                        // world viewport height and ground line
   const GRAV = 900, JV = 300, V_AUTO = 84, V_MAN = 110;
   const AIR = 2 * JV / GRAV;                      // time in the air for a full jump
   const JD = V_AUTO * AIR;                        // horizontal jump distance on autopilot
@@ -23,16 +24,22 @@
   // ---------- canvases ----------
   const view = $('#view'), vctx = view.getContext('2d');
   const buf = document.createElement('canvas'); buf.width = W; buf.height = H;
+  const buf2 = document.createElement('canvas'); buf2.width = W; buf2.height = H;
   let ctx = buf.getContext('2d');
-  let S = 1;
+  const ctx2 = buf2.getContext('2d');
+  let S = 1, DPR = 1;
+  const MIN_TEXT = 10; // smallest in-game label, CSS px
   function resize() {
     const r = view.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    view.width = Math.max(1, Math.round(r.width * dpr));
-    view.height = Math.max(1, Math.round(r.height * dpr));
+    if (!r.width || !r.height) return;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    view.width = Math.max(1, Math.round(r.width * DPR));
+    view.height = Math.max(1, Math.round(r.height * DPR));
+    W = clamp(Math.round(H * r.width / r.height), 160, 360);
+    if (buf.width !== W) { buf.width = W; buf2.width = W; }
     S = view.width / W;
-    document.documentElement.style.setProperty('--u', (r.width / 100) + 'px');
   }
+  const lead = () => Math.round(W * 0.32); // how far behind the player the camera's left edge sits
   new ResizeObserver(resize).observe(view);
 
   // ---------- pixel helpers ----------
@@ -156,8 +163,8 @@
       });
     },
     egypt(camX) {
-      alpha(0.35); ctx.fillStyle = '#fff6d5'; disc(250, 44, 22); alpha(1);
-      ctx.fillStyle = '#fff1c1'; disc(250, 44, 15);
+      alpha(0.35); ctx.fillStyle = '#fff6d5'; disc(Math.round(W * 0.78), 44, 22); alpha(1);
+      ctx.fillStyle = '#fff1c1'; disc(Math.round(W * 0.78), 44, 15);
       tiles(camX, 0.12, 170, (i, x) => {
         if (hash(i * 19) < 0.3) return;
         const h = 34 + Math.floor(hash(i * 3) * 26);
@@ -234,8 +241,8 @@
       });
     },
     final(camX) {
-      ctx.fillStyle = '#ffd27a'; disc(160, GY - 4, 30);
-      alpha(0.25); ctx.fillStyle = '#fff0c0'; disc(160, GY - 4, 40); alpha(1);
+      ctx.fillStyle = '#ffd27a'; disc(W >> 1, GY - 4, 30);
+      alpha(0.25); ctx.fillStyle = '#fff0c0'; disc(W >> 1, GY - 4, 40); alpha(1);
       tiles(camX, 0.1, 90, (i, x) => {
         const y = 20 + Math.floor(hash(i * 7) * 50);
         alpha(0.6); rect('#ffd0d8', x, y, 34, 4); rect('#ffd0d8', x + 6, y - 3, 20, 3); alpha(1);
@@ -407,6 +414,7 @@
 
   window.addEventListener('keydown', (e) => {
     if ($('#cv').open) return;
+    if (e.target.closest && e.target.closest('button, a')) { if (e.code === 'Enter' || e.code === 'Space') return; }
     if (e.code === 'Enter' && st.mode === 'title') { start(true); return; }
     if (st.mode !== 'play') return;
     if ((e.code === 'Enter' || e.code === 'Space') && st.auto && st.card) { e.preventDefault(); closeCard(); return; }
@@ -544,7 +552,6 @@
       c.seen = true; openCard(c);
       if (st.auto) P.vx = 0;
     }
-    if (st.card && !st.auto && Math.abs(pcx - st.card.x) > 230) closeCard();
 
     // chapters
     const ci = chapterAt(pcx);
@@ -556,7 +563,7 @@
 
     if (pcx >= world.portal.x + 14) finish();
 
-    const tx = clamp(P.x - 104, 0, world.end - W);
+    const tx = clamp(P.x - lead(), 0, world.end - W);
     cam.x = lerp(cam.x, tx, 1 - Math.exp(-dt * 8));
   }
 
@@ -570,8 +577,6 @@
     return { a: cs[chapterAt(cx)].theme, b: null, t: 0 };
   }
 
-  const buf2 = document.createElement('canvas'); buf2.width = W; buf2.height = H;
-  const ctx2 = buf2.getContext('2d');
   function drawTheme(name, camX, a) {
     const T = TH[name], n = T.bands.length;
     if (a < 1) { // render the incoming theme off-screen, then fade it in as a whole
@@ -666,7 +671,8 @@
   function drawSign(s, camX) {
     const x = Math.round(s.x - camX);
     if (x < -80 || x > W + 80) return;
-    const w = Math.max(16, s.text.length * 5 + 8);
+    const fs = Math.max(4, MIN_TEXT * DPR / S);           // glyph width in world px (pixel font is 1em wide)
+    const w = Math.max(16, Math.ceil(s.text.length * fs + 8));
     rect('#5a3b22', x - 1, GY - 22, 3, 22);
     rect('#8a5a32', x - w / 2, GY - 32, w, 11); rect('#a8743f', x - w / 2, GY - 32, w, 1); rect('#4a2f1a', x - w / 2, GY - 22, w, 1);
     hi(s.text, x + 0.5, GY - 26.2, 4, '#fff3d6');
@@ -787,7 +793,7 @@
     vctx.textBaseline = 'middle';
     for (const q of hiQ) {
       vctx.globalAlpha = q.a;
-      vctx.font = Math.round(q.size * S) + 'px ' + FONT;
+      vctx.font = Math.round(Math.max(q.size * S, MIN_TEXT * DPR)) + 'px ' + FONT;
       vctx.textAlign = q.align;
       const sx = q.x * S, sy = q.y * S;
       vctx.fillStyle = 'rgba(0,0,0,0.55)';
@@ -813,15 +819,17 @@
     (c.tags || []).forEach((t) => { const s = document.createElement('span'); s.textContent = t; $('#cardTags').appendChild(s); });
     $('#cardBar').style.width = '0%';
     cardMode();
-    cardEl.hidden = false;
-    cardEl.classList.remove('show'); void cardEl.offsetWidth; cardEl.classList.add('show');
+    cardEl.classList.remove('flash'); void cardEl.offsetWidth; cardEl.classList.add('flash');
+    if (window.matchMedia('(max-aspect-ratio: 5/4)').matches) {
+      const r = cardEl.getBoundingClientRect();
+      if (r.top > window.innerHeight - 80 || r.top < 0) cardEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
     Sound.sfx('card');
   }
-  function cardMode() {
-    cardEl.classList.toggle('manual', !st.auto);
-    $('#cardNext').textContent = st.auto ? 'Дальше ⏎' : 'Закрыть ✕';
-  }
-  function closeCard() { st.card = null; cardEl.hidden = true; }
+  // The description stays on screen; "idle" only hides the reading timer and the skip button.
+  function cardMode() { cardEl.classList.toggle('idle', !(st.card && st.auto)); }
+  function closeCard() { st.card = null; cardMode(); }
+  const INTRO = cardEl.innerHTML;
   $('#cardNext').addEventListener('click', closeCard);
 
   let bannerT = 0;
@@ -867,13 +875,14 @@
 
   function jumpTo(ci) {
     if (st.mode !== 'play') start(st.mode === 'title' ? true : st.auto);
+    if (st.paused) setPaused(false);
     const x = world.chapters[ci].x0 + 10;
     P.x = x; P.y = GY - P.h; P.vx = 0; P.vy = 0; P.knock = 0;
     for (const c of world.cards) c.seen = c.x < x;
     for (const b of world.blocks) if (b.x >= x) b.done = false;
     for (const it of world.items) if (it.x >= x) it.done = false;
     closeCard();
-    cam.x = clamp(P.x - 104, 0, world.end - W);
+    cam.x = clamp(P.x - lead(), 0, world.end - W);
     st.ch = -1;
   }
 
@@ -893,6 +902,8 @@
   function reset() {
     P.x = 40; P.y = GY - P.h; P.vx = P.vy = 0; P.face = 1; P.knock = 0;
     cam.x = 0; st.skills = []; st.bugs = 0; st.ch = -1; closeCard();
+    cardEl.innerHTML = INTRO; cardEl.classList.add('idle');
+    $('#cardNext').addEventListener('click', closeCard);
     world.items.forEach((it) => { it.got = false; it.done = false; });
     world.blocks.forEach((b) => { b.done = false; });
     world.cards.forEach((c) => { c.seen = false; });
@@ -942,7 +953,17 @@
   });
 
   // pause when the tab is hidden
-  document.addEventListener('visibilitychange', () => { if (document.hidden && st.mode === 'play' && !st.paused) setPaused(true); });
+  let autoPaused = false;
+  function softPause(on) {
+    if (on && st.mode === 'play' && !st.paused) { setPaused(true); autoPaused = true; }
+    else if (!on && autoPaused) { autoPaused = false; setPaused(false); }
+  }
+  document.addEventListener('visibilitychange', () => softPause(document.hidden));
+  // the text résumé pauses the game while it is open
+  const dlg = $('#cv');
+  new MutationObserver(() => softPause(dlg.open)).observe(dlg, { attributes: true, attributeFilter: ['open'] });
+  // clicked buttons drop focus, so Space/Enter keep controlling the game
+  document.addEventListener('click', (e) => { const b = e.target.closest('.hbtn, .tl-seg, .btn, .card-next'); if (b && !b.closest('dialog')) b.blur(); });
 
   // ---------- loop ----------
   resize();
@@ -962,7 +983,7 @@
   // ?cover renders the social preview image (title over the 'systems' chapter)
   if (new URLSearchParams(location.search).has('cover')) {
     document.body.classList.add('cover');
-    P.x = 2430; P.costume = 'egypt'; cam.x = P.x - 104;
+    P.x = 2430; P.costume = 'egypt'; cam.x = P.x - lead();
     world.stats.forEach((s) => { s.t = 5; });
     const draw = () => { resize(); render(); };
     draw(); setTimeout(draw, 300);
@@ -973,6 +994,6 @@
   // debug hook for automated checks
   window.__game = {
     st, P, world, jumpTo, start, reset,
-    sim(sec) { for (let i = 0; i < sec * 60; i++) update(1 / 60); cam.x = clamp(P.x - 104, 0, world.end - W); render(); },
+    sim(sec) { for (let i = 0; i < sec * 60; i++) update(1 / 60); cam.x = clamp(P.x - lead(), 0, world.end - W); render(); },
   };
 })();

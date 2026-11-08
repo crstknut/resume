@@ -38,69 +38,73 @@
           <p>Пауза</p>
           <button class="btn" id="btnResume">Продолжить</button>
         </div>
-      </div>
 
-      <section class="card" id="card" hidden aria-live="polite">
-        <div class="card-head">
-          <span class="card-year" id="cardYear"></span>
-          <span class="card-place" id="cardPlace"></span>
-        </div>
-        <h2 class="card-title" id="cardTitle"></h2>
-        <ul class="card-lines" id="cardLines"></ul>
-        <div class="card-tags" id="cardTags"></div>
-        <div class="card-foot">
-          <div class="card-bar"><i id="cardBar"></i></div>
-          <button class="card-next" id="cardNext">Дальше ⏎</button>
-        </div>
-      </section>
+        <section class="screen title" id="title">
+          <div class="screen-box">
+            <p class="kicker">Резюме-игра · 2 минуты</p>
+            <h1>Петр Фримэн</h1>
+            <p class="role">Python-разработчик полного цикла · AI Engineer</p>
+            <p class="tagline">Семь лет в строительных лабораториях, потом системы, на которых эти лаборатории работают</p>
+            <div class="screen-btns">
+              <button class="btn primary" id="btnWatch">▶ Смотреть</button>
+              <button class="btn" id="btnPlay">🎮 Играть самому</button>
+            </div>
+            <p class="hint">Не хотите играть? <button class="link" data-cv>Откройте резюме текстом</button></p>
+          </div>
+        </section>
+
+        <section class="screen end" id="end" hidden>
+          <div class="screen-box end-box">
+            <img class="photo" src="assets/avatar.jpg" alt="Петр Фримэн" width="160" height="160">
+            <div class="end-text">
+              <p class="kicker">Уровень пройден</p>
+              <h1>Петр Фримэн</h1>
+              <p class="role">Python-разработчик полного цикла · AI Engineer</p>
+              <p class="pitch">Прототип за дни, рабочая система за недели. Ищу команду, где это нужно.</p>
+              <p class="end-stats" id="endStats"></p>
+              <div class="end-skills" id="endSkills"></div>
+              <div class="screen-btns">
+                <a class="btn primary" data-tg target="_blank" rel="noopener" hidden>✈ Написать в Telegram</a>
+                <button class="btn" data-cv>📄 Резюме текстом</button>
+                <button class="btn" id="btnAgain">↻ Ещё раз</button>
+              </div>
+              <p class="made">Игру сделал сам вместе с Claude Code</p>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <div class="hud">
         <div class="hud-skills" title="Собранные навыки">
           <span class="star">★</span><span id="skillCount">0/0</span>
           <span class="skill-last" id="skillLast"></span>
         </div>
-        <div class="timeline" id="timeline" aria-label="Главы"></div>
         <div class="hud-btns">
           <button class="hbtn" id="btnAuto" aria-pressed="true" title="Автопилот: игра идёт сама, как видео">▶ Автопилот</button>
-          <button class="hbtn" id="btnSound" title="Звук (M)">🔊</button>
-          <button class="hbtn" id="btnCv" title="Резюме текстом">📄 Текстом</button>
-          <button class="hbtn" id="btnRestart" title="Сначала">↻</button>
+          <button class="hbtn" id="btnSound" title="Звук (M)" aria-label="Звук">🔊</button>
+          <button class="hbtn" id="btnCv" title="Резюме текстом"><span aria-hidden="true">📄</span><span class="lbl"> Текстом</span></button>
+          <button class="hbtn" id="btnRestart" title="Сначала" aria-label="Сначала">↻</button>
         </div>
+        <div class="timeline" id="timeline" aria-label="Главы"></div>
       </div>
 
-    <section class="screen title" id="title">
-      <div class="screen-box">
-        <p class="kicker">Резюме-игра · 2 минуты</p>
-        <h1>Петр Фримэн</h1>
-        <p class="role">Python-разработчик полного цикла · AI Engineer</p>
-        <p class="tagline">Семь лет в строительных лабораториях, потом системы, на которых эти лаборатории работают</p>
-        <div class="screen-btns">
-          <button class="btn primary" id="btnWatch">▶ Смотреть</button>
-          <button class="btn" id="btnPlay">🎮 Играть самому</button>
+      <section class="card idle" id="card" aria-live="polite">
+        <div class="card-head">
+          <span class="card-year" id="cardYear">Как смотреть</span>
+          <span class="card-place" id="cardPlace"></span>
         </div>
-        <p class="hint">Не хотите играть? <button class="link" data-cv>Откройте резюме текстом</button></p>
-      </div>
-    </section>
-
-    <section class="screen end" id="end" hidden>
-      <div class="screen-box end-box">
-        <img class="photo" src="assets/avatar.jpg" alt="Петр Фримэн" width="160" height="160">
-        <div class="end-text">
-          <p class="kicker">Уровень пройден</p>
-          <h1>Петр Фримэн</h1>
-          <p class="role">Python-разработчик полного цикла · AI Engineer</p>
-          <p class="pitch">Прототип за дни, рабочая система за недели. Ищу команду, где это нужно.</p>
-          <p class="end-stats" id="endStats"></p>
-          <div class="end-skills" id="endSkills"></div>
-          <div class="screen-btns">
-            <a class="btn primary" data-tg target="_blank" rel="noopener" hidden>✈ Написать в Telegram</a>
-            <button class="btn" data-cv>📄 Резюме текстом</button>
-            <button class="btn" id="btnAgain">↻ Ещё раз</button>
-          </div>
-          <p class="made">Игру сделал сам вместе с Claude Code</p>
+        <h2 class="card-title" id="cardTitle">История в 10 вехах</h2>
+        <ul class="card-lines" id="cardLines">
+          <li>«Смотреть» — игра идёт сама, как видео, и останавливается на каждой вехе</li>
+          <li>Любая клавиша (← → пробел) или кнопки на экране — управление ваше</li>
+          <li>Полоса с годами — перемотка по главам</li>
+        </ul>
+        <div class="card-tags" id="cardTags"></div>
+        <div class="card-foot">
+          <div class="card-bar"><i id="cardBar"></i></div>
+          <button class="card-next" id="cardNext">Дальше ⏎</button>
         </div>
-      </div>
-    </section>
+      </section>
     </div>
   </main>
 
