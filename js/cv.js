@@ -32,7 +32,8 @@
     const m = el('div');
     m.append(el('h3', null, j.title), el('p', 'cv-place', j.place));
     const ul = el('ul'); j.points.forEach((p) => ul.append(el('li', null, p)));
-    m.append(ul); d.append(m); exp.append(d);
+    if (j.points.length) m.append(ul);
+    d.append(m); exp.append(d);
   });
 
   const sk = sec('Навыки');
