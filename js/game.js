@@ -688,9 +688,10 @@
   }
 
   function drawStat(s, camX) {
-    const x = Math.round(s.x - camX);
-    if (x < -130 || x > W + 10) return;
-    const bw = 112, top = GY - 82;
+    const fs = Math.max(4, MIN_TEXT * DPR / S);           // label glyph width in world px
+    const bw = Math.max(112, Math.ceil(s.label.length * fs + 10)), top = GY - 82;
+    const x = Math.round(s.x + 56 - bw / 2 - camX);        // grow around the original centre
+    if (x < -bw - 10 || x > W + 10) return;
     rect('#334', x + 18, top + 32, 2, GY - top - 32); rect('#334', x + bw - 20, top + 32, 2, GY - top - 32);
     rect('#081428', x, top, bw, 32); rect('#3de0ff', x, top, bw, 1); rect('#3de0ff', x, top + 31, bw, 1); rect('#3de0ff', x, top, 1, 32); rect('#3de0ff', x + bw - 1, top, 1, 32);
     const m = s.value.match(/[\d\s]+/), num = m ? parseInt(m[0].replace(/\s/g, ''), 10) : 0;
