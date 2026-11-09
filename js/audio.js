@@ -16,7 +16,7 @@ window.Sound = (() => {
   const CHAPTER = [
     { key: 0, lead: 'triangle', hats: 0 },
     { key: 2, lead: 'square', hats: 1 },
-    { key: 3, lead: 'triangle', hats: 1 },
+    { key: 2, lead: 'triangle', hats: 0 },  // north: same key as the lab, softer
     { key: 4, lead: 'square', hats: 1 },
     { key: 5, lead: 'square', hats: 1 },
     { key: 7, lead: 'square', hats: 2 },
