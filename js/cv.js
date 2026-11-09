@@ -45,11 +45,12 @@
   }
 
   const ed = sec('Образование');
-  const e = cv.education;
-  const d = el('div', 'cv-job');
-  d.append(el('div', 'cv-period', e.year));
-  const m = el('div'); m.append(el('h3', null, e.title), el('p', 'cv-place', e.place + ' · ' + e.spec));
-  d.append(m); ed.append(d);
+  [].concat(cv.education).forEach((e) => {
+    const d = el('div', 'cv-job');
+    d.append(el('div', 'cv-period', e.year));
+    const m = el('div'); m.append(el('h3', null, e.title), el('p', 'cv-place', e.place + ' · ' + e.spec));
+    d.append(m); ed.append(d);
+  });
 
   const dlg = document.getElementById('cv');
   document.querySelectorAll('[data-cv], #btnCv').forEach((b) => b.addEventListener('click', () => dlg.showModal()));
