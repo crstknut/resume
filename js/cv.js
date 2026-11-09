@@ -17,6 +17,11 @@
     a.href = 'https://t.me/' + R.telegram; a.target = '_blank'; a.rel = 'noopener';
     hb.append(a);
   }
+  if (R.email) {
+    const a = el('a', 'cv-contact', 'Почта: ' + R.email);
+    a.href = 'mailto:' + R.email;
+    hb.append(a);
+  }
   head.append(img, hb);
   body.append(head);
 

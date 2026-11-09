@@ -951,6 +951,9 @@
   document.querySelectorAll('[data-tg]').forEach((a) => {
     if (tg) { a.href = tg; a.hidden = false; } else a.hidden = true;
   });
+  document.querySelectorAll('[data-mail]').forEach((a) => {
+    if (R.email) { a.href = 'mailto:' + R.email; a.title = R.email; a.hidden = false; } else a.hidden = true;
+  });
 
   // pause when the tab is hidden
   let autoPaused = false;
