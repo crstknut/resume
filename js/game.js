@@ -809,7 +809,7 @@
   function openCard(c) {
     st.card = c; st.readT = 0;
     const chars = (c.title + c.lines.join(' ')).length;
-    st.readDur = clamp(3.2 + chars / 42, 5, 9);
+    st.readDur = clamp(2 + chars / 60, 4, 6);
     $('#cardYear').textContent = c.year;
     $('#cardTitle').textContent = c.title;
     $('#cardPlace').textContent = c.place || '';
