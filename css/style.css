@@ -176,7 +176,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
 .end-skills { display: flex; flex-wrap: wrap; gap: 5px; margin: 0 0 18px; max-height: 92px; overflow: auto; }
 .end-skills span { font-size: 12px; border: 1px solid var(--accent); color: var(--accent); padding: 2px 6px; border-radius: 3px; }
 .end-skills span.miss { border-color: var(--line); color: var(--muted); }
-.made { font-size: 13px; color: var(--muted); margin: 16px 0 0; }
 
 /* ---------- layout: stacked (narrow or tall screens) ---------- */
 @media (max-aspect-ratio: 5/4) {
