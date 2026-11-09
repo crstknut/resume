@@ -86,6 +86,7 @@
   const TH = {
     kyiv: { sky: ['#1b1440', '#45286a', '#b8507a', '#f0a25a'], ground: ['#5d5d6c', '#45454f', '#8b8b99'], block: 'books' },
     site: { sky: ['#3b8bd0', '#69b2e6', '#a5d6f4', '#d6f0fb'], ground: ['#8a6a4a', '#6a4e34', '#a98b62'], block: 'cubes' },
+    north: { sky: ['#0e1b3d', '#24497a', '#6f9cc4', '#d7e6f2'], ground: ['#e6eef6', '#b8c8d8', '#ffffff'], block: 'ice' },
     qc: { sky: ['#56708e', '#7c94ae', '#a7b8ca', '#d0d9e2'], ground: ['#8f9196', '#6f7176', '#b4b6ba'], block: 'cubes' },
     egypt: { sky: ['#e3953f', '#f1b866', '#f7d595', '#fdedc3'], ground: ['#dfbb76', '#c59e57', '#f0d89e'], block: 'sand' },
     systems: { sky: ['#050a1a', '#0a1530', '#0f2147', '#15305e'], ground: ['#0c2442', '#081a31', '#3de0ff'], block: 'server', grid: true },
@@ -146,6 +147,39 @@
         const hx = x - 30 - Math.round(Math.sin(i + camX * 0.002) * 4);
         rect('#333', hx, top + 3, 1, 24); rect('#8a8f96', hx - 5, top + 27, 11, 6);
       });
+    },
+    north(camX) {
+      const t = performance.now() / 1000;
+      for (let x = 0; x < W; x += 2) { // aurora
+        const wx = x + camX * 0.03;
+        const y = 26 + Math.round(10 * Math.sin(wx * 0.02 + t * 0.4) + 5 * Math.sin(wx * 0.05 - t * 0.7));
+        alpha(0.12); rect('#b07aff', x, y - 6, 2, 6);
+        alpha(0.3); rect('#5cf2a8', x, y, 2, 14);
+        alpha(0.14); rect('#7affc8', x, y + 14, 2, 12);
+      }
+      alpha(1);
+      for (let x = 0; x < W; x += 2) { // snowy hills
+        const wx = x + camX * 0.12;
+        const y = GY - 26 - Math.round(12 * Math.sin(wx * 0.013) + 7 * Math.sin(wx * 0.037));
+        rect('#c9d8e6', x, y, 2, GY - y); rect('#ffffff', x, y, 2, 2);
+      }
+      tiles(camX, 0.45, 38, (i, x) => { // spruces under snow
+        if (hash(i * 13) < 0.25) return;
+        x += Math.floor(hash(i * 7) * 12);
+        const h = 26 + Math.floor(hash(i * 5) * 22), base = GY - 5;
+        rect('#3a2a1e', x - 1, base, 3, 5);
+        for (let r = 0; r < h; r++) {
+          const half = Math.floor(r * 0.32) + 1;
+          rect(r % 7 === 1 ? '#f4f8fb' : '#1f4a3c', x - half, base - h + r, half * 2 + 1, 1);
+        }
+      });
+      for (let k = 0; k < 60; k++) { // snowfall
+        const sp = 14 + hash(k * 5) * 18, big = hash(k) > 0.7 ? 2 : 1;
+        const x = ((hash(k * 3) * W * 2 - camX * 0.6 + Math.sin(t + k) * 6) % W + W) % W;
+        const y = (hash(k * 7) * GY + t * sp) % GY;
+        alpha(0.85); rect('#ffffff', x, y, big, big);
+      }
+      alpha(1);
     },
     qc(camX) {
       tiles(camX, 0.2, 28, (i, x) => {
@@ -261,6 +295,7 @@
   const COSTUME = {
     student: { T: '#3f7a5c', t: '#2f5e46', C: '#e8e8e8' },
     lab: { T: '#ff8a1f', t: '#e6e6e6', C: '#5a5f6a', helmet: { Y: '#ffb21f', y: '#ffe08a' } },
+    north: { T: '#c8402f', t: '#9a2e22', C: '#efe8d8', helmet: { Y: '#5a3b26', y: '#7a5236' } },
     qc: { T: '#2f6fd1', t: '#e6e6e6', C: '#f0f0f0', helmet: { Y: '#f2f2f2', y: '#ffffff' } },
     egypt: { T: '#ffd21f', t: '#e6e6e6', C: '#f0f0f0', P: '#7a6644', helmet: { Y: '#f2f2f2', y: '#ffffff' } },
     dev: { T: '#1f2a4a', t: '#151d36', C: '#f4f4f4' },
@@ -324,11 +359,12 @@
     crab: ['o......o', 'oo....oo', '.oooooo.', 'oowooowo', 'oooooooo', '.oooooo.', 'o.o..o.o', '........'],
     droid: ['g......g', '.g....g.', '..gggg..', '.gwggwg.', '.gggggg.', '........', '.gggggg.', '.gggggg.'],
     film: ['KKKKKKKK', 'KwKwKwKw', 'KrrrrrrK', 'KrrrrrrK', 'KrrrrrrK', 'KrrrrrrK', 'KwKwKwKw', 'KKKKKKKK'],
+    flake: ['l..l..l.', '.l.l.l..', '..lll...', 'lllwlll.', '..lll...', '.l.l.l..', 'l..l..l.', '........'],
     star: ['...yy...', '...yy...', 'yyyyyyyy', '.yyyyyy.', '..yyyy..', '.yy..yy.', 'yy....yy', '........'],
   };
   const ICON = {};
   for (const k in ICONS) ICON[k] = sprite(ICONS[k], IPAL);
-  const HALO = { scroll: '#ffe7a0', hammer: '#cfd6e0', flask: '#7ee081', gauge: '#ff9a7a', clip: '#ffffff', people: '#ffb24a', wave: '#7ee081', gear: '#7ee081', py: '#ffd43b', db: '#3de0ff', key: '#ffd43b', plane: '#5ab0ff', eye: '#3de0ff', brain: '#ff8ad8', chip: '#3de0ff', bot: '#3de0ff', crab: '#f07a3a', droid: '#7ee081', film: '#ff6a6a', star: '#ffd43b' };
+  const HALO = { scroll: '#ffe7a0', hammer: '#cfd6e0', flask: '#7ee081', gauge: '#ff9a7a', clip: '#ffffff', people: '#ffb24a', wave: '#7ee081', gear: '#7ee081', py: '#ffd43b', db: '#3de0ff', key: '#ffd43b', plane: '#5ab0ff', eye: '#3de0ff', brain: '#ff8ad8', chip: '#3de0ff', bot: '#3de0ff', crab: '#f07a3a', droid: '#7ee081', film: '#ff6a6a', flake: '#cfe8ff', star: '#ffd43b' };
 
   const BUG = [
     sprite(['..K....K..', '...K..K...', '.RRRRRRRR.', 'RRwRRRRwRR', 'RRRRKKRRRR', '.RRRRRRRR.', '.K.K..K.K.'], { K: '#1a1a24', R: '#e0483c', w: '#ffffff' }),
@@ -720,6 +756,13 @@
           rect('#7a7a76', cx, cy + 9, 10, 1); rect('#7a7a76', cx + 9, cy, 1, 10); rect('#d14b3a', cx + 3, cy + 3, 2, 1);
         }
         break;
+      case 'ice':
+        for (let cy = GY - 10; cy >= y; cy -= 10) for (let cx = x; cx < x + b.w; cx += 10) {
+          rect('#9fc3dc', cx, cy, 10, 10); rect('#d6ecf8', cx, cy, 10, 1); rect('#d6ecf8', cx, cy, 1, 10);
+          rect('#6f97b4', cx, cy + 9, 10, 1); rect('#6f97b4', cx + 9, cy, 1, 10); rect('#ffffff', cx + 2, cy + 2, 2, 1);
+        }
+        rect('#ffffff', x - 1, y - 2, b.w + 2, 3); rect('#dfe9f2', x, y + 1, b.w, 1);
+        break;
       case 'sand':
         for (let cy = GY - 5, r = 0; cy >= y; cy -= 5, r++) for (let cx = x - (r % 2 ? 4 : 0); cx < x + b.w; cx += 8) {
           const sx = Math.max(cx, x), sw = Math.min(cx + 8, x + b.w) - sx;
@@ -866,7 +909,7 @@
   world.chapters.forEach((C, i) => {
     const seg = document.createElement('button');
     seg.className = 'tl-seg'; seg.style.flexGrow = String(C.x1 - C.x0);
-    seg.innerHTML = '<span>' + C.short + '</span>';
+    seg.innerHTML = '<span>' + C.short.replace(/^(20)(\d\d)$/, '<i>$1</i>$2') + '</span>'; // "20" hides on narrow screens
     seg.title = C.years + ' · ' + C.title;
     seg.setAttribute('aria-label', 'Перейти: ' + C.years + ', ' + C.title);
     seg.addEventListener('click', () => jumpTo(i));
@@ -998,7 +1041,8 @@
   // ?cover renders the social preview image (title over the 'systems' chapter)
   if (new URLSearchParams(location.search).has('cover')) {
     document.body.classList.add('cover');
-    P.x = 2430; P.costume = 'egypt'; cam.x = P.x - lead();
+    const eg = world.chapters.find((c) => c.id === 'egypt') || world.chapters[0];
+    P.x = eg.x0 + 210; P.costume = 'egypt'; cam.x = P.x - lead();
     world.stats.forEach((s) => { s.t = 5; });
     const draw = () => { resize(); render(); };
     draw(); setTimeout(draw, 300);

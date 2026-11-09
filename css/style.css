@@ -109,13 +109,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
 .skill-last.pop { animation: skill .6s; }
 @keyframes skill { 0% { color: var(--gold); transform: translateY(-3px); } 100% { color: var(--muted); } }
 
-.timeline { position: relative; order: 2; flex: 1 1 240px; display: flex; gap: 2px; height: 34px; min-width: 240px; overflow: hidden; }
+.timeline { position: relative; order: 2; flex: 1 1 340px; display: flex; gap: 2px; height: 34px; min-width: 340px; overflow: hidden; }
 .hud-btns { order: 3; display: flex; gap: 6px; }
 .tl-seg {
-  position: relative; z-index: 1; flex-basis: 0; min-width: 30px; background: rgba(255, 255, 255, 0.04);
+  position: relative; z-index: 1; flex-basis: 0; min-width: 40px; background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--line); border-radius: 4px; padding: 0; color: var(--muted);
   font-family: var(--pixel); font-size: 9px; display: flex; align-items: center; justify-content: center; overflow: hidden;
 }
+.tl-seg i { font-style: normal; }
 .tl-seg:hover { border-color: var(--accent); color: #fff; }
 .tl-seg.cur { color: #fff; border-color: var(--gold); }
 .tl-fill { position: absolute; z-index: 0; left: 0; top: 0; bottom: 0; width: 0; background: linear-gradient(90deg, rgba(61,224,255,.2), rgba(255,79,216,.26)); border-radius: 4px; pointer-events: none; }
@@ -200,7 +201,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
   .hud { flex-wrap: wrap; gap: 8px; }
   .hud-skills { flex: 1 1 auto; font-size: 13px; }
   .timeline { order: 4; flex-basis: 100%; height: 40px; }
-  .tl-seg { font-size: 10px; }
+  .tl-seg { font-size: 10px; min-width: 30px; }
+  .tl-seg i { display: none; }
+  .timeline { min-width: 0; }
   .hbtn { min-height: 40px; min-width: 42px; padding: 4px 9px; font-size: 15px; }
   .hbtn .lbl { display: none; }
   #btnAuto { font-size: 13px; }
@@ -238,6 +241,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
   .hbtn { min-height: 34px; }
   .timeline { height: 32px; min-width: 120px; }
   .tl-seg { min-width: 28px; font-size: 8px; }
+  .tl-seg i { display: none; }
 }
 
 /* ---------- text résumé ---------- */
