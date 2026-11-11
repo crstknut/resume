@@ -72,7 +72,7 @@ window.RESUME = {
     },
     {
       id: 'north', theme: 'north', costume: 'north',
-      years: '2019–2020', short: '2019', title: 'Север: своя лаборатория',
+      years: '2019–2020', short: '2019', title: 'Своя лаборатория и команда',
       beats: [
         { t: 'sign', text: '2019' },
         { t: 'card', year: '2019–2020', title: 'Начальник строительной лаборатории',
