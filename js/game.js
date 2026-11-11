@@ -147,6 +147,20 @@
         const hx = x - 30 - Math.round(Math.sin(i + camX * 0.002) * 4);
         rect('#333', hx, top + 3, 1, 24); rect('#8a8f96', hx - 5, top + 27, 11, 6);
       });
+      // first light snow: a few flakes, thickening toward the north chapter
+      const ch = world.chapters.find((c) => c.theme === 'site');
+      if (ch) {
+        const t = performance.now() / 1000;
+        const prog = clamp((camX + W / 2 - ch.x0) / (ch.x1 - ch.x0), 0, 1);
+        const n = Math.round(4 + prog * 18);
+        for (let k = 0; k < n; k++) {
+          const sp = 8 + hash(k * 5 + 1) * 10;
+          const x = ((hash(k * 3 + 2) * W * 2 - camX * 0.6 + Math.sin(t * 0.8 + k) * 8) % W + W) % W;
+          const y = (hash(k * 7 + 4) * GY + t * sp) % GY;
+          alpha(0.75); rect('#ffffff', x, y, 1, 1);
+        }
+        alpha(1);
+      }
     },
     north(camX) {
       const t = performance.now() / 1000;
